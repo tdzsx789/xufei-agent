@@ -1,0 +1,338 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.header h1 {
+    font-size: 2.5e;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+.main-content {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+.project-section, .launch-section, .status-section, .info-section {
+    margin-bottom: 30px;
+}
+
+.project-section h2, .launch-section h2, .status-section h2, .info-section h2 {
+    color: #4a5568;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#urlInput {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#urlInput:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+}
+
+.btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #38a169;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #a0aec0 !important;
+    color: #718096 !important;
+}
+
+.btn:disabled:hover {
+    background: #a0aec0 !important;
+    color: #718096 !important;
+}
+
+.saved-url {
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #667eea;
+    word-break: break-all;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.status-label {
+    font-weight: 600;
+}
+
+.status-value {
+    font-weight: 500;
+}
+
+.status-success {
+    color: #48bb78;
+}
+
+.status-error {
+    color: #f56565;
+}
+
+.status-warning {
+    color: #ed8936;
+}
+
+.info-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-list li {
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.info-list li:before {
+    content: "•";
+    color: #667eea;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.footer {
+    text-align: center;
+    color: white;
+    opacity: 0.8;
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.3s;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-success {
+    background: #48bb78;
+}
+
+.notification-error {
+    background: #f56565;
+}
+
+.notification-warning {
+    background: #ed8936;
+}
+
+.notification-info {
+    background: #4299e1;
+}
+
+/* 项目管理样式 */
+.project-controls {
+    margin-bottom: 20px;
+}
+
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.project-item {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.project-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.project-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #4a5568;
+    flex: 1;
+    margin-right: 15px;
+}
+
+.project-name span {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.project-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.project-actions button {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.btn-folder {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-folder:hover {
+    background: #38a169;
+}
+
+.btn-delete {
+    background: #f56565;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #e53e3e;
+}
+
+.project-path {
+    background: #edf2f7;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #4a5568;
+    word-break: break-all;
+    margin-top: 10px;
+}
+
+.project-path-label {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+/* 启动按钮样式 */
+.launch-section {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.2);
+}
+
+.launch-section h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 1.2em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.launch-controls {
+    text-align: center;
+}
+
+.btn-large {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.btn-large:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.btn-large:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}

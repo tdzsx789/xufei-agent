@@ -1,0 +1,6 @@
+{
+  "interface": false,
+  "address": "D:\\code\\xufei-agent\\app",
+  "entrance": "main.html",
+  "subEntrance": "secondary.html"
+}

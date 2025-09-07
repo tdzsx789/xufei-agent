@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页启动器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+        </header>
+
+        <main class="main-content">
+            <div class="project-section">
+                <h2>📁 项目管理</h2>
+                <div class="project-controls">
+                    <button id="addProjectBtn" class="btn btn-primary">📁 选择项目文件夹</button>
+                </div>
+                
+                <div id="projectsList" class="projects-list">
+                    <!-- 项目列表将在这里动态生成 -->
+                </div>
+            </div>
+
+            <div class="launch-controls">
+                <button id="launchBtn" class="btn btn-success btn-large" disabled>🚀 启动项目</button>
+            </div>
+
+            <div class="status-section">
+                <h2>📊 系统状态</h2>
+                <div class="status-item">
+                    <span class="status-label">Node服务状态:</span>
+                    <span id="serverStatus" class="status-value">正在启动...</span>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="footer">
+        </footer>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
