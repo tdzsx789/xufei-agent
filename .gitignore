@@ -133,6 +133,9 @@ pids
 out/
 app/dist/
 
+# App folder (contains compiled/built files)
+app/
+
 # Temporary files
 tmp/
 temp/
