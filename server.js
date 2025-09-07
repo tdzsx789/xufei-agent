@@ -4,6 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
+// 添加启动调试信息
+console.log('=== Node Server Starting ===');
+console.log(`Start time: ${new Date().toISOString()}`);
+console.log(`Working directory: ${process.cwd()}`);
+console.log(`Script directory: ${__dirname}`);
+console.log(`Node version: ${process.version}`);
+console.log(`Platform: ${process.platform}`);
+console.log(`Architecture: ${process.arch}`);
+console.log('============================');
+
 // 设置控制台编码为UTF-8
 if (process.platform === 'win32') {
     try {
@@ -28,11 +38,11 @@ try {
         console.log('Config file loaded successfully:', config);
     } else {
         console.log('Config file not found, using default config');
-        config = { interface: true, address: __dirname, entrance: "main.html" };
+        config = { interface: true, entrance: "main.html" };
     }
 } catch (error) {
     console.error('Failed to read config file:', error);
-    config = { interface: true, address: __dirname, entrance: "main.html" };
+    config = { interface: true, entrance: "main.html" };
 }
 
 const app = express();
@@ -155,8 +165,7 @@ app.get('/config', (req, res) => {
 app.get('/shouldShowInterface', (req, res) => {
     res.json({
         success: true,
-        showInterface: config.interface === true,
-        address: config.address
+        showInterface: config.interface === true
     });
 });
 
@@ -409,6 +418,19 @@ app.listen(PORT, () => {
     console.log(`Node server started on port: ${PORT}`);
     console.log(`Service address: http://localhost:${PORT}`);
     console.log('Server ready!');
+    console.log(`Process working directory: ${process.cwd()}`);
+    console.log(`Process executable: ${process.execPath}`);
+    console.log(`Node version: ${process.version}`);
+    console.log(`Platform: ${process.platform}`);
+}).on('error', (err) => {
+    console.error('Failed to start server:', err);
+    console.error('Error details:', {
+        code: err.code,
+        errno: err.errno,
+        syscall: err.syscall,
+        address: err.address,
+        port: err.port
+    });
 });
 
 // 优雅关闭

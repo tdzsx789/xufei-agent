@@ -1,0 +1,64 @@
+# Electron Builder 优化配置
+appId: com.xufei.agent
+productName: Xufei Agent
+
+# 构建目录配置
+directories:
+  output: dist
+  buildResources: build
+
+# 文件包含/排除配置
+files:
+  - main.js
+  - renderer.js
+  - server.js
+  - web-server.js
+  - index.html
+  - style.css
+  - config.json
+  - project.json
+  - app/**/*
+  - "!app/static/**/*.png"
+  - "!**/*.map"
+  - "!**/*.log"
+  - "!**/node_modules/**/*"
+  - "!**/dist/**/*"
+  - "!**/.git/**/*"
+  - "!**/.gitignore"
+  - "!**/README.md"
+  - "!**/package-lock.json"
+  - "!**/yarn.lock"
+  - "!**/scripts/**/*"
+
+# 额外资源
+extraResources:
+  - from: app/static
+    to: app/static
+    filter: ["**/*"]
+
+# 构建优化
+compression: maximum
+removePackageScripts: true
+removePackageKeywords: true
+removePackageAuthor: true
+removePackageDescription: true
+
+# Windows 配置
+win:
+  target:
+    - target: portable
+      arch: [x64]
+  icon: icon.ico
+
+# 便携版配置
+portable:
+  artifactName: start.exe
+
+# NSIS 安装程序配置
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  installerIcon: icon.ico
+  uninstallerIcon: icon.ico

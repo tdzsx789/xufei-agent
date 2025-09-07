@@ -6,8 +6,11 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
-    "build": "electron-builder",
-    "server": "node server.js"
+    "build": "npm run build:server && npm run build:win",
+    "build:win": "electron-builder --win",
+    "server": "node server.js",
+    "build:server": "pkg server.js --targets node18-win-x64 --output dist/server.exe",
+    "build:all": "npm run build:server && npm run build:win"
   },
   "keywords": [
     "electron",
@@ -18,7 +21,9 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^38.0.0",
-    "electron-builder": "^24.6.4"
+    "electron-builder": "^24.13.3",
+    "rimraf": "^6.0.1",
+    "pkg": "^5.8.1"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -32,12 +37,42 @@
       "output": "dist"
     },
     "files": [
-      "**/*",
-      "!node_modules/**/*"
+      "main.js",
+      "renderer.js",
+      "web-server.js",
+      "index.html",
+      "style.css",
+      "config.json",
+      "project.json",
+      "app/**/*",
+      "!node_modules/**/*",
+      "!dist/**/*",
+      "!.git/**/*",
+      "!.gitignore"
+    ],
+    "extraResources": [
+      {
+        "from": "server.js",
+        "to": "server.js"
+      },
+      {
+        "from": "config.json",
+        "to": "config.json"
+      },
+      {
+        "from": "project.json",
+        "to": "project.json"
+      },
+      {
+        "from": "dist/server.exe",
+        "to": "server.exe"
+      }
     ],
     "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
+      "target": "portable"
+    },
+    "portable": {
+      "artifactName": "start.exe"
     }
   }
 }

@@ -25,106 +25,31 @@ let kioskWindows = []; // 存储kiosk窗口的数组
 // 读取配置文件
 let config = {};
 try {
-    const configPath = path.join(__dirname, 'config.json');
+    // 在打包后的环境中，配置文件在resources目录中
+    const isPackaged = app.isPackaged;
+    const configPath = isPackaged ? path.join(process.resourcesPath, 'config.json') : path.join(__dirname, 'config.json');
+    
     if (fs.existsSync(configPath)) {
         const configData = fs.readFileSync(configPath, 'utf8');
         config = JSON.parse(configData);
         console.log('Config file loaded successfully:', config);
-        
-        // 检查address是否为空，如果为空则自动设置为默认地址
-        if (!config.address || config.address.trim() === '') {
-            console.log('Address is empty, setting default address');
-            const defaultAddress = path.join(__dirname, 'app');
-            config.address = defaultAddress;
-            console.log('Default address set to:', defaultAddress);
-            
-            // 保存更新后的配置
-            const configToSave = {
-                interface: config.interface !== undefined ? config.interface : true,
-                address: config.address,
-                entrance: config.entrance || "main.html",
-                subEntrance: config.subEntrance || "secondary.html"
-            };
-            fs.writeFileSync(configPath, JSON.stringify(configToSave, null, 2));
-            console.log('Config file updated with default address');
-            
-            // 同时更新项目配置
-            try {
-                const projectPath = path.join(__dirname, 'project.json');
-                const projectName = path.basename(defaultAddress) || 'app';
-                const projectData = {
-                    id: Date.now(),
-                    name: projectName,
-                    path: defaultAddress
-                };
-                fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2));
-                console.log('Project file updated with default address:', projectData);
-            } catch (projectError) {
-                console.error('Failed to update project file:', projectError);
-            }
-        }
     } else {
         console.log('Config file not found, using default config');
-        const defaultAddress = path.join(__dirname, 'app');
-        config = { interface: true, address: defaultAddress, entrance: "main.html", subEntrance: "secondary.html" };
-        console.log('Default address set to:', defaultAddress);
+        config = { interface: true, entrance: "main.html", subEntrance: "secondary.html" };
         
         // 创建默认配置文件
         const configToSave = {
             interface: true,
-            address: defaultAddress,
             entrance: "main.html",
             subEntrance: "secondary.html"
         };
         fs.writeFileSync(configPath, JSON.stringify(configToSave, null, 2));
         console.log('Default config file created');
-        
-        // 同时创建默认项目配置
-        try {
-            const projectPath = path.join(__dirname, 'project.json');
-            const projectName = path.basename(defaultAddress) || 'app';
-            const projectData = {
-                id: Date.now(),
-                name: projectName,
-                path: defaultAddress
-            };
-            fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2));
-            console.log('Default project file created:', projectData);
-        } catch (projectError) {
-            console.error('Failed to create default project file:', projectError);
-        }
     }
 } catch (error) {
     console.error('Failed to read config file:', error);
-    const defaultAddress = path.join(__dirname, 'app');
-    config = { interface: true, address: defaultAddress, entrance: "main.html", subEntrance: "secondary.html" };
-    console.log('Default address set to (error fallback):', defaultAddress);
-    
-    // 尝试创建默认配置文件（错误恢复）
-    try {
-        const configPath = path.join(__dirname, 'config.json');
-        const configToSave = {
-            interface: true,
-            address: defaultAddress,
-            entrance: "main.html",
-            subEntrance: "secondary.html"
-        };
-        fs.writeFileSync(configPath, JSON.stringify(configToSave, null, 2));
-        console.log('Default config file created (error recovery)');
-        
-        // 同时创建默认项目配置
-        const projectPath = path.join(__dirname, 'project.json');
-        const projectName = path.basename(defaultAddress) || 'app';
-        const projectData = {
-            id: Date.now(),
-            name: projectName,
-            path: defaultAddress
-        };
-        fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2));
-        console.log('Default project file created (error recovery):', projectData);
-    } catch (fallbackError) {
-        console.error('Failed to create fallback config files:', fallbackError);
-    }
+    config = { interface: true, entrance: "main.html", subEntrance: "secondary.html" };
+    console.log('Using default config (error fallback)');
 }
 
 // 创建kiosk窗口的辅助函数
@@ -177,9 +102,14 @@ function createKioskWindow(display, filePath, title = 'Kiosk Window') {
 
 // 创建主窗口
 function createWindow(forceShow = false) {
+  console.log('=== createWindow() called ===');
+  console.log('forceShow:', forceShow);
+  console.log('config.interface:', config.interface);
+  console.log('Current mainWindow:', mainWindow ? 'exists' : 'null');
+  
   // 根据配置决定是否显示界面，除非强制显示
   if (config.interface === false && !forceShow) {
-    console.log('Interface disabled, opening entrance file in kiosk mode:', config.address);
+    console.log('Interface disabled, opening entrance file in kiosk mode');
     
     // 获取所有显示器
     const displays = screen.getAllDisplays();
@@ -194,19 +124,19 @@ function createWindow(forceShow = false) {
       console.log('Dual monitor mode detected');
       
       // 主显示器显示entrance文件
-      const entrancePath = path.join(config.address, config.entrance || 'main.html');
+      const entrancePath = path.join(__dirname, 'app', config.entrance || 'main.html');
       console.log('Opening entrance file on primary display:', entrancePath);
       createKioskWindow(displays[0], entrancePath, 'Primary Display - Entrance');
       
       // 副显示器显示subEntrance文件
-      const subEntrancePath = path.join(config.address, config.subEntrance);
+      const subEntrancePath = path.join(__dirname, 'app', config.subEntrance);
       console.log('Opening subEntrance file on secondary display:', subEntrancePath);
       createKioskWindow(displays[1], subEntrancePath, 'Secondary Display - SubEntrance');
       
     } else {
       // 单显示器模式或没有subEntrance配置
       console.log('Single monitor mode or no subEntrance configured');
-      const entrancePath = path.join(config.address, config.entrance || 'main.html');
+      const entrancePath = path.join(__dirname, 'app', config.entrance || 'main.html');
       console.log('Opening entrance file in kiosk mode:', entrancePath);
       createKioskWindow(displays[0], entrancePath, 'Single Display - Entrance');
     }
@@ -243,46 +173,199 @@ function createWindow(forceShow = false) {
 
 // 启动Node服务
 function startNodeServer() {
+  console.log('=== startNodeServer() called ===');
   console.log('Starting Node server...');
   
-  // 启动server.js
-  serverProcess = spawn('node', ['server.js'], {
-    cwd: __dirname,
-    stdio: 'pipe'
+  // 发送启动日志到渲染进程
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('server-log', {
+      type: 'info',
+      message: `[${new Date().toLocaleTimeString()}] 正在启动Node服务...`
+    });
+  }
+  
+  // 确定server的路径
+  const isPackaged = app.isPackaged;
+  let serverPath;
+  let useExecutable = false;
+  
+  if (isPackaged) {
+    // 在打包环境中，优先使用打包的server.exe
+    const serverExePath = path.join(process.resourcesPath, 'server.exe');
+    if (fs.existsSync(serverExePath)) {
+      serverPath = serverExePath;
+      useExecutable = true;
+      console.log('Using packaged server.exe');
+    } else {
+      // 回退到server.js
+      serverPath = path.join(process.resourcesPath, 'server.js');
+      console.log('Using server.js (server.exe not found)');
+    }
+  } else {
+    serverPath = path.join(__dirname, 'server.js');
+  }
+  
+  console.log('Server path:', serverPath);
+  console.log('Is packaged:', isPackaged);
+  
+  // 发送路径信息到渲染进程
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('server-log', {
+      type: 'info',
+      message: `[${new Date().toLocaleTimeString()}] 服务路径: ${serverPath}`
+    });
+  }
+  
+  // 检查server.js文件是否存在
+  if (!fs.existsSync(serverPath)) {
+    const errorMsg = `[${new Date().toLocaleTimeString()}] 错误: server.js文件不存在于 ${serverPath}`;
+    console.error(errorMsg);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('server-log', {
+        type: 'error',
+        message: errorMsg
+      });
+    }
+    return;
+  }
+  
+  // 确定启动方式
+  let nodeExecutable;
+  let serverArgs = [];
+  
+  if (useExecutable) {
+    // 使用打包的server.exe，不需要Node.js
+    nodeExecutable = serverPath;
+    serverArgs = [];
+    console.log('Using server.exe directly, no Node.js required');
+  } else {
+    // 使用Node.js运行server.js
+    nodeExecutable = 'node';
+    serverArgs = [serverPath];
+    if (isPackaged) {
+      console.log('Using system PATH node executable');
+    }
+  }
+  
+  console.log('Node executable:', nodeExecutable);
+  
+  // 发送Node可执行文件信息到渲染进程
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('server-log', {
+      type: 'info',
+      message: `[${new Date().toLocaleTimeString()}] Node可执行文件: ${nodeExecutable}`
+    });
+  }
+  
+  // 启动server
+  serverProcess = spawn(nodeExecutable, serverArgs, {
+    cwd: isPackaged ? process.resourcesPath : __dirname,
+    stdio: 'pipe',
+    env: { ...process.env }
   });
 
   serverProcess.stdout.on('data', (data) => {
-    console.log(`Server output: ${data}`);
+    const logMessage = `[${new Date().toLocaleTimeString()}] Server output: ${data}`;
+    console.log(logMessage);
+    
+    // 发送日志到渲染进程
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('server-log', {
+        type: 'info',
+        message: logMessage
+      });
+    }
   });
 
   serverProcess.stderr.on('data', (data) => {
-    console.error(`Server error: ${data}`);
+    const logMessage = `[${new Date().toLocaleTimeString()}] Server error: ${data}`;
+    console.error(logMessage);
+    
+    // 发送错误日志到渲染进程
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('server-log', {
+        type: 'error',
+        message: logMessage
+      });
+    }
   });
 
   serverProcess.on('close', (code) => {
-    console.log(`Server process exited with code: ${code}`);
+    const logMessage = `[${new Date().toLocaleTimeString()}] Server process exited with code: ${code}`;
+    console.log(logMessage);
+    
+    // 发送关闭日志到渲染进程
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('server-log', {
+        type: 'warning',
+        message: logMessage
+      });
+    }
   });
 
   serverProcess.on('error', (err) => {
-    console.error('Error starting server:', err);
+    const logMessage = `[${new Date().toLocaleTimeString()}] Error starting server: ${err.message}`;
+    console.error(logMessage);
+    console.error('Error details:', err);
+    
+    // 发送错误日志到渲染进程
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('server-log', {
+        type: 'error',
+        message: logMessage
+      });
+      
+      // 发送详细错误信息
+      mainWindow.webContents.send('server-log', {
+        type: 'error',
+        message: `[${new Date().toLocaleTimeString()}] 错误详情: ${JSON.stringify(err, null, 2)}`
+      });
+    }
+  });
+  
+  // 添加进程启动事件监听
+  serverProcess.on('spawn', () => {
+    console.log('=== serverProcess.on(spawn) triggered ===');
+    const logMessage = `[${new Date().toLocaleTimeString()}] Node服务进程已启动 (PID: ${serverProcess.pid})`;
+    console.log(logMessage);
+    console.log('mainWindow exists:', mainWindow ? 'yes' : 'no');
+    
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      console.log('Sending log to mainWindow...');
+      mainWindow.webContents.send('server-log', {
+        type: 'success',
+        message: logMessage
+      });
+    } else {
+      console.log('mainWindow not available, skipping log send');
+    }
   });
 }
 
 // 当Electron完成初始化并准备创建浏览器窗口时调用此方法
 app.whenReady().then(() => {
+  console.log('=== app.whenReady() called ===');
+  
   // 总是启动Node服务器
+  console.log('Starting Node server...');
   startNodeServer();
   
   // 不注册全局快捷键
   
   // 根据配置决定是否创建窗口
+  console.log('Creating main window...');
   createWindow();
 
   app.on('activate', () => {
+    console.log('=== app.on(activate) triggered ===');
+    console.log('Current window count:', BrowserWindow.getAllWindows().length);
     // 在macOS上，当单击dock图标并且没有其他窗口打开时，
     // 通常在应用程序中重新创建窗口
     if (BrowserWindow.getAllWindows().length === 0) {
+      console.log('No windows open, creating new window...');
       createWindow();
+    } else {
+      console.log('Windows already exist, not creating new window');
     }
   });
 });
@@ -313,87 +396,8 @@ app.on('before-quit', () => {
 });
 
 // IPC通信处理
-ipcMain.handle('get-project', () => {
-  try {
-    const data = fs.readFileSync('project.json', 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    return null;
-  }
-});
 
-ipcMain.handle('save-project', (event, project) => {
-  try {
-    fs.writeFileSync('project.json', JSON.stringify(project, null, 2));
-    return { success: true };
-  } catch (error) {
-    console.error('保存项目数据时出错:', error);
-    return { success: false, error: error.message };
-  }
-});
 
-ipcMain.handle('select-folder', async () => {
-  const { dialog } = require('electron');
-  try {
-    const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ['openDirectory'],
-      title: '选择项目文件夹'
-    });
-    
-    if (result.canceled) {
-      return { success: false, cancelled: true };
-    }
-    
-    const selectedPath = result.filePaths[0];
-    
-    // 更新config.json中的address字段
-    try {
-      config.address = selectedPath;
-      const configPath = path.join(__dirname, 'config.json');
-      console.log('Config file path:', configPath);
-      console.log('Selected path:', selectedPath);
-      
-      // 使用JSON.stringify时，确保路径格式正确
-      const configToSave = {
-        interface: config.interface,
-        address: selectedPath,
-        entrance: config.entrance || "main.html",
-        subEntrance: config.subEntrance || ""
-      };
-      
-      console.log('Config to save:', configToSave);
-      fs.writeFileSync(configPath, JSON.stringify(configToSave, null, 2));
-      console.log('Config file updated successfully, new address:', selectedPath);
-      
-      // 验证文件是否真的被写入
-      const savedConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-      console.log('Verified saved config:', savedConfig);
-    } catch (configError) {
-      console.error('Error updating config file:', configError);
-      console.error('Error details:', configError.message);
-      console.error('Error stack:', configError.stack);
-    }
-    
-    return { 
-      success: true, 
-      path: selectedPath 
-    };
-  } catch (error) {
-    console.error('选择文件夹时出错:', error);
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('open-folder', async (event, folderPath) => {
-  const { shell } = require('electron');
-  try {
-    await shell.openPath(folderPath);
-    return { success: true };
-  } catch (error) {
-    console.error('打开文件夹时出错:', error);
-    return { success: false, error: error.message };
-  }
-});
 
 // 获取当前配置
 ipcMain.handle('get-config', () => {
@@ -409,11 +413,11 @@ ipcMain.handle('update-config', (event, newConfig) => {
     // 合并新配置
     config = { ...config, ...newConfig };
     
-    // 保存到文件，确保路径格式正确
-    const configPath = path.join(__dirname, 'config.json');
+    // 保存到文件
+    const isPackaged = app.isPackaged;
+    const configPath = isPackaged ? path.join(process.resourcesPath, 'config.json') : path.join(__dirname, 'config.json');
     const configToSave = {
       interface: config.interface,
-      address: config.address,
       entrance: config.entrance || "main.html",
       subEntrance: config.subEntrance || ""
     };
@@ -433,10 +437,10 @@ ipcMain.handle('update-entrance', (event, entranceFile) => {
     config.entrance = entranceFile;
     
     // 保存到文件
-    const configPath = path.join(__dirname, 'config.json');
+    const isPackaged = app.isPackaged;
+    const configPath = isPackaged ? path.join(process.resourcesPath, 'config.json') : path.join(__dirname, 'config.json');
     const configToSave = {
       interface: config.interface,
-      address: config.address,
       entrance: config.entrance,
       subEntrance: config.subEntrance || ""
     };
@@ -456,10 +460,10 @@ ipcMain.handle('update-sub-entrance', (event, subEntranceFile) => {
     config.subEntrance = subEntranceFile;
     
     // 保存到文件
-    const configPath = path.join(__dirname, 'config.json');
+    const isPackaged = app.isPackaged;
+    const configPath = isPackaged ? path.join(process.resourcesPath, 'config.json') : path.join(__dirname, 'config.json');
     const configToSave = {
       interface: config.interface,
-      address: config.address,
       entrance: config.entrance || "main.html",
       subEntrance: config.subEntrance
     };
@@ -491,19 +495,19 @@ ipcMain.handle('launch-kiosk', () => {
       console.log('Launching dual monitor kiosk mode');
       
       // 主显示器显示entrance文件
-      const entrancePath = path.join(config.address, config.entrance || 'main.html');
+      const entrancePath = path.join(__dirname, 'app', config.entrance || 'main.html');
       console.log('Opening entrance file on primary display:', entrancePath);
       createKioskWindow(displays[0], entrancePath, 'Primary Display - Entrance');
       
       // 副显示器显示subEntrance文件
-      const subEntrancePath = path.join(config.address, config.subEntrance);
+      const subEntrancePath = path.join(__dirname, 'app', config.subEntrance);
       console.log('Opening subEntrance file on secondary display:', subEntrancePath);
       createKioskWindow(displays[1], subEntrancePath, 'Secondary Display - SubEntrance');
       
     } else {
       // 单显示器模式或没有subEntrance配置
       console.log('Launching single monitor kiosk mode');
-      const entrancePath = path.join(config.address, config.entrance || 'main.html');
+      const entrancePath = path.join(__dirname, 'app', config.entrance || 'main.html');
       console.log('Opening entrance file in kiosk mode:', entrancePath);
       createKioskWindow(displays[0], entrancePath, 'Single Display - Entrance');
     }

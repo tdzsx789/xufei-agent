@@ -12,19 +12,9 @@
         </header>
 
         <main class="main-content">
-            <div class="project-section">
-                <h2>📁 项目管理</h2>
-                <div class="project-controls">
-                    <button id="addProjectBtn" class="btn btn-primary">📁 选择项目文件夹</button>
-                </div>
-                
-                <div id="projectsList" class="projects-list">
-                    <!-- 项目列表将在这里动态生成 -->
-                </div>
-            </div>
-
             <div class="launch-controls">
-                <button id="launchBtn" class="btn btn-success btn-large" disabled>🚀 启动项目</button>
+                <!-- <h2>🚀 项目启动</h2> -->
+                <button id="launchBtn" class="btn btn-success btn-large">🚀 启动项目</button>
             </div>
 
             <div class="status-section">
@@ -32,6 +22,19 @@
                 <div class="status-item">
                     <span class="status-label">Node服务状态:</span>
                     <span id="serverStatus" class="status-value">正在启动...</span>
+                </div>
+            </div>
+
+            <div class="log-section">
+                <h2>📝 服务日志</h2>
+                <div class="log-controls">
+                    <button id="clearLogBtn" class="btn btn-secondary btn-small">清空日志</button>
+                    <button id="toggleLogBtn" class="btn btn-secondary btn-small">展开/收起</button>
+                </div>
+                <div id="logContainer" class="log-container">
+                    <div id="logContent" class="log-content">
+                        <div class="log-item info">等待服务启动...</div>
+                    </div>
                 </div>
             </div>
 

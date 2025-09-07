@@ -336,3 +336,129 @@ body {
     transform: translateY(0);
     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
+
+/* 日志区域样式 */
+.log-section {
+    margin-bottom: 30px;
+}
+
+.log-section h2 {
+    color: #4a5568;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.log-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-small {
+    padding: 5px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+    border-color: #a0aec0;
+}
+
+.log-container {
+    background: #1a202c;
+    border-radius: 8px;
+    border: 1px solid #2d3748;
+    overflow: hidden;
+    max-height: 300px;
+    transition: max-height 0.3s ease;
+}
+
+.log-container.collapsed {
+    max-height: 40px;
+}
+
+.log-content {
+    padding: 10px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    max-height: 280px;
+    overflow-y: auto;
+    color: #e2e8f0;
+}
+
+.log-item {
+    margin-bottom: 5px;
+    padding: 2px 0;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.log-item.info {
+    color: #68d391;
+}
+
+.log-item.error {
+    color: #fc8181;
+    background: rgba(252, 129, 129, 0.1);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.log-item.warning {
+    color: #f6e05e;
+    background: rgba(246, 224, 94, 0.1);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.log-item.success {
+    color: #68d391;
+    background: rgba(104, 211, 145, 0.1);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* 滚动条样式 */
+.log-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.log-content::-webkit-scrollbar-track {
+    background: #2d3748;
+}
+
+.log-content::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 3px;
+}
+
+.log-content::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+}
+
+/* 状态值样式 */
+.status-value.success {
+    color: #48bb78;
+    font-weight: 600;
+}
+
+.status-value.error {
+    color: #f56565;
+    font-weight: 600;
+}
+
+.status-value.warning {
+    color: #ed8936;
+    font-weight: 600;
+}
